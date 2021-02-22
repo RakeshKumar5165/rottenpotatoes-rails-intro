@@ -8,6 +8,7 @@ class MoviesController < ApplicationController
   end
 
   def index
+
     if request.original_fullpath == "/"
       session.delete(:ratings)
       session.delete(:selected_column)
@@ -18,20 +19,20 @@ class MoviesController < ApplicationController
     ratings =  @all_ratings
     @selected_column = session[:selected_column]
     
-    if params[:sort_column].present?
-      @selected_column = params[:sort_column]
-      session[:selected_column] = @selected_column
-    end
+    if params[:home].present?
+      if params[:sort_column].present?
+        @selected_column = params[:sort_column]
+        session[:selected_column] = @selected_column
+      end
+      if  params[:ratings].present?
+        @ratings_to_show = params[:ratings].keys 
+        ratings = @ratings_to_show
+      end
+      session[:ratings] = @ratings_to_show
     
-    if  params[:ratings].present?
-      @ratings_to_show = params[:ratings].keys 
-      ratings = @ratings_to_show
-      session[:ratings] = ratings
-    end
-    
-    if  !(params[:ratings].present? || params[:sort_column].present?) && session[:ratings].present?
-      ratings = session[:ratings]
-      @ratings_to_show = ratings
+    elsif session[:ratings].present?
+        ratings = session[:ratings]
+        @ratings_to_show = ratings
     end
     
     @movies = Movie.with_ratings(@selected_column,ratings)
