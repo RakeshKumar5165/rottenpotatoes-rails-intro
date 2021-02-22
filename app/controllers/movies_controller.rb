@@ -8,6 +8,11 @@ class MoviesController < ApplicationController
   end
 
   def index
+    if request.original_fullpath == "/"
+      session.delete(:ratings)
+      session.delete(:selected_column)
+    end
+    
     @ratings_to_show =  []
     @all_ratings = Movie.all_ratings
     ratings =  @all_ratings
